@@ -7,13 +7,16 @@ const Logo = () => {
   const router = useRouter();
 
   return (
-    <Image
-      alt='logo'
-      className='hidden md:block cursor-pointer'
-      width='100'
-      height='100'
-      src='/images/logo-light.png'
-    />
+    <span className='hidden md:block cursor-pointer text-rose-500 font-bold text-2xl'>
+      🏨 WildOasis
+    </span>
+    // <Image
+    //   alt='logo'
+    //   className='hidden md:block cursor-pointer'
+    //   width='100'
+    //   height='100'
+    //   src='/images/the-wild-oasis-logo.png'
+    // />
   );
 };
 
