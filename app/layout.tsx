@@ -1,7 +1,10 @@
-import './globals.css';
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
+import RegisterModal from './components/modals/RegisterModal';
 import Navbar from './components/navbar/Navbar';
+import './globals.css';
+import ToasterProvider from './providers/ToasterProvider';
+import ClientOnly from './components/ClientOnly';
 
 export const metadata: Metadata = {
   title: 'The Wild Oasis',
@@ -20,7 +23,11 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={font.className}>
-        <Navbar />
+        <ClientOnly>
+          <Navbar />
+          <RegisterModal />
+          <ToasterProvider />
+        </ClientOnly>
         {children}
       </body>
     </html>

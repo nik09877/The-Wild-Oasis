@@ -1,7 +1,16 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
+// import { signOut } from "next-auth/react";
+import { useRouter } from 'next/navigation';
+
+// import useLoginModal from "@/app/hooks/useLoginModal";
+import useRegisterModal from '@/app/hooks/useRegisterModal';
+// import useRentModal from "@/app/hooks/useRentModal";
+// import { SafeUser } from "@/app/types";
+
+import MenuItem from './MenuItem';
 import Avatar from '../Avatar';
 
 const UserMenu = () => {
@@ -84,7 +93,7 @@ const UserMenu = () => {
                   label='My properties'
                   onClick={() => router.push('/properties')}
                 />
-                <MenuItem label='Airbnb your home' onClick={rentModal.onOpen} />
+                <MenuItem label='Rent your home' onClick={rentModal.onOpen} />
                 <hr />
                 <MenuItem label='Logout' onClick={() => signOut()} />
               </>
