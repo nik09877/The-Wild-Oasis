@@ -2,29 +2,54 @@
 
 import { useCallback, useState } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
-// import { signOut } from "next-auth/react";
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
-// import useLoginModal from "@/app/hooks/useLoginModal";
+import useLoginModal from '@/app/hooks/useLoginModal';
 import useRegisterModal from '@/app/hooks/useRegisterModal';
-// import useRentModal from "@/app/hooks/useRentModal";
-// import { SafeUser } from "@/app/types";
+// import useRentModal from '@/app/hooks/useRentModal';
+import { SafeUser } from '@/app/types';
 
 import MenuItem from './MenuItem';
 import Avatar from '../Avatar';
 
-const UserMenu = () => {
+interface UserMenuProps {
+  currentUser?: SafeUser | null;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+  const router = useRouter();
+
+  const loginModal = useLoginModal();
+  const registerModal = useRegisterModal();
+  // const rentModal = useRentModal();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
+
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+    // rentModal.onOpen();
+  }, [
+    loginModal,
+    {
+      /*rentModal*/
+    },
+    currentUser,
+  ]);
 
   return (
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
         <div
-          onClick={() => {}}
-          className='hidden
+          onClick={onRent}
+          className='
+            hidden
             md:block
             text-sm 
             font-semibold 
@@ -33,13 +58,15 @@ const UserMenu = () => {
             rounded-full 
             hover:bg-neutral-100 
             transition 
-            cursor-pointer'
+            cursor-pointer
+          '
         >
-          Rent Your Home
+          Rent your home
         </div>
         <div
           onClick={toggleOpen}
-          className='p-4
+          className='
+          p-4
           md:py-1
           md:px-2
           border-[1px] 
@@ -51,11 +78,12 @@ const UserMenu = () => {
           rounded-full 
           cursor-pointer 
           hover:shadow-md 
-          transition'
+          transition
+          '
         >
           <AiOutlineMenu />
           <div className='hidden md:block'>
-            <Avatar />
+            <Avatar src={currentUser?.image} />
           </div>
         </div>
       </div>
@@ -75,7 +103,7 @@ const UserMenu = () => {
           '
         >
           <div className='flex flex-col cursor-pointer'>
-            {/* {currentUser ? (
+            {currentUser ? (
               <>
                 <MenuItem
                   label='My trips'
@@ -93,7 +121,7 @@ const UserMenu = () => {
                   label='My properties'
                   onClick={() => router.push('/properties')}
                 />
-                <MenuItem label='Rent your home' onClick={rentModal.onOpen} />
+                {/* <MenuItem label='Rent your home' onClick={rentModal.onOpen} /> */}
                 <hr />
                 <MenuItem label='Logout' onClick={() => signOut()} />
               </>
@@ -102,7 +130,7 @@ const UserMenu = () => {
                 <MenuItem label='Login' onClick={loginModal.onOpen} />
                 <MenuItem label='Sign up' onClick={registerModal.onOpen} />
               </>
-            )} */}
+            )}
           </div>
         </div>
       )}

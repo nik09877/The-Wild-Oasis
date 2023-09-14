@@ -8,7 +8,7 @@ const Logo = () => {
 
   return (
     <span className='hidden md:block cursor-pointer text-rose-500 font-bold text-2xl'>
-      🏨 WildOasis
+      🏨 Wild Oasis
     </span>
     // <Image
     //   alt='logo'
