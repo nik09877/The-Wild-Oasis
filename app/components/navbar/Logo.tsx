@@ -1,13 +1,16 @@
 'use client';
 
-import Image from 'next/image';
+// import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 const Logo = () => {
   const router = useRouter();
 
   return (
-    <span className='hidden md:block cursor-pointer text-rose-500 font-bold text-2xl'>
+    <span
+      className='hidden md:block cursor-pointer text-rose-500 font-bold text-2xl'
+      onClick={() => router.push('/')}
+    >
       🏨 Wild Oasis
     </span>
     // <Image
