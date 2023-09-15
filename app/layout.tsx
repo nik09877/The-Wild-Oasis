@@ -7,6 +7,7 @@ import ToasterProvider from './providers/ToasterProvider';
 import ClientOnly from './components/ClientOnly';
 import LoginModal from './components/modals/LoginModal';
 import getCurrentUser from './actions/getCurrentUser';
+import RentModal from './components/modals/RentModal';
 
 export const metadata: Metadata = {
   title: 'The Wild Oasis',
@@ -30,6 +31,7 @@ export default async function RootLayout({
           <ToasterProvider />
           <LoginModal />
           <RegisterModal />
+          <RentModal />
           <Navbar currentUser={currentUser} />
         </ClientOnly>
         {children}

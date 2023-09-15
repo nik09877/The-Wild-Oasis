@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 import useLoginModal from '@/app/hooks/useLoginModal';
 import useRegisterModal from '@/app/hooks/useRegisterModal';
-// import useRentModal from '@/app/hooks/useRentModal';
+import useRentModal from '@/app/hooks/useRentModal';
 import { SafeUser } from '@/app/types';
 
 import MenuItem from './MenuItem';
@@ -22,7 +22,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
 
   const loginModal = useLoginModal();
   const registerModal = useRegisterModal();
-  // const rentModal = useRentModal();
+  const rentModal = useRentModal();
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -34,14 +34,8 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
     if (!currentUser) {
       return loginModal.onOpen();
     }
-    // rentModal.onOpen();
-  }, [
-    loginModal,
-    {
-      /*rentModal*/
-    },
-    currentUser,
-  ]);
+    rentModal.onOpen();
+  }, [loginModal, rentModal, currentUser]);
 
   return (
     <div className='relative'>
@@ -121,7 +115,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
                   label='My properties'
                   onClick={() => router.push('/properties')}
                 />
-                {/* <MenuItem label='Rent your home' onClick={rentModal.onOpen} /> */}
+                <MenuItem label='Rent your home' onClick={rentModal.onOpen} />
                 <hr />
                 <MenuItem label='Logout' onClick={() => signOut()} />
               </>
