@@ -1,43 +1,40 @@
-import { NextResponse } from 'next/server';
+// import { NextResponse } from 'next/server';
 
-import prisma from '@/app/libs/prismadb';
-import getCurrentUser from '@/app/actions/getCurrentUser';
+// import prisma from '@/app/libs/prismadb';
+// import getCurrentUser from '@/app/actions/getCurrentUser';
 
-export async function POST(request: Request) {
-  const currentUser = await getCurrentUser();
+// export async function POST(request: Request) {
+//   const currentUser = await getCurrentUser();
 
-  if (!currentUser) {
-    return NextResponse.error();
-  }
+//   if (!currentUser) {
+//     return NextResponse.error();
+//   }
 
-  const body = await request.json();
-  const { listingId, startDate, endDate, totalPrice } = body;
+//   const body = await request.json();
+//   const { listingId, startDate, endDate, totalPrice } = body;
 
-  if (!listingId || !startDate || !endDate || !totalPrice) {
-    return NextResponse.error();
-  }
+//   if (!listingId || !startDate || !endDate || !totalPrice) {
+//     return NextResponse.error();
+//   }
 
-  const listingAndReservation = await prisma.listing.update({
-    where: {
-      id: listingId,
-    },
-    data: {
-      reservations: {
-        create: {
-          userId: currentUser.id,
-          startDate,
-          endDate,
-          totalPrice,
-        },
-      },
-    },
-  });
+//   const listingAndReservation = await prisma.listing.update({
+//     where: {
+//       id: listingId,
+//     },
+//     data: {
+//       reservations: {
+//         create: {
+//           userId: currentUser.id,
+//           startDate,
+//           endDate,
+//           totalPrice,
+//         },
+//       },
+//     },
+//   });
 
-  return NextResponse.json(listingAndReservation);
-}
-
-/*
-TODO ACID TRANSACTION
+//   return NextResponse.json(listingAndReservation);
+// }
 
 import { NextResponse } from 'next/server';
 
@@ -57,46 +54,64 @@ export async function POST(request: Request) {
   if (!listingId || !startDate || !endDate || !totalPrice) {
     return NextResponse.error();
   }
-
-  // Start a new transaction
-  const transaction = await prisma.startTransaction();
 
   try {
-    // Update the listing to add the new reservation
-    await prisma.listing.update({
-      where: {
-        id: listingId,
-      },
-      data: {
+    const listingAndReservation = await prisma.$transaction(async (tx) => {
+      //1. find suitable listing
+      let query: any = {};
+      query.id = listingId;
+      query.NOT = {
         reservations: {
-          create: {
-            userId: currentUser.id,
-            startDate,
-            endDate,
-            totalPrice,
+          some: {
+            OR: [
+              {
+                endDate: { gte: startDate },
+                startDate: { lte: startDate },
+              },
+              {
+                startDate: { lte: endDate },
+                endDate: { gte: endDate },
+              },
+            ],
           },
         },
-      },
+      };
+      const listings = await tx.listing.findMany({
+        where: query,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      // 2. Verify availability
+      const isListingAvailable = listings.some(
+        (listing) => listing.id === listingId
+      );
+      if (!isListingAvailable) {
+        throw new Error('Listing Not available');
+      }
+
+      // 3. Return reservation
+      const listingAndReservation = await tx.listing.update({
+        where: {
+          id: listingId,
+        },
+        data: {
+          reservations: {
+            create: {
+              userId: currentUser.id,
+              startDate,
+              endDate,
+              totalPrice,
+            },
+          },
+        },
+      });
+
+      return listingAndReservation;
     });
-
-    // Commit the transaction
-    await transaction.commitTransaction();
+    return NextResponse.json(listingAndReservation);
   } catch (error) {
-    // Roll back the transaction if any errors occur
-    await transaction.rollbackTransaction();
-
-    // Throw the error to the caller
-    throw error;
+    return NextResponse.error();
   }
-
-  // Get the listing and reservation
-  const listingAndReservation = await prisma.listing.findUnique({
-    where: {
-      id: listingId,
-    },
-  });
-
-  return NextResponse.json(listingAndReservation);
 }
-
-*/
