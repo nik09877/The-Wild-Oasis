@@ -100,37 +100,3 @@ export async function POST(request: Request) {
 }
 
 */
-/*
-  
-  // Start a new transaction
-const transaction = await prisma.startTransaction();
-
-// Check the availability of the room
-const room = await prisma.room.findUnique({
-  where: {
-    id: roomId,
-  },
-});
-
-// If the room is not available, roll back the transaction
-if (!room.available) {
-  await transaction.rollbackTransaction();
-  throw new Error('Room is not available');
-}
-
-// Reserve the room for the user
-await prisma.room.update({
-  where: {
-    id: roomId,
-  },
-  data: {
-    bookedBy: userId,
-  },
-});
-
-// Commit the transaction
-await transaction.commitTransaction();
-
-// The room has now been booked for the user
-
-  */
