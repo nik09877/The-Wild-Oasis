@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 
 import prisma from '@/app/libs/prismadb';
 import getCurrentUser from '@/app/actions/getCurrentUser';
+import getListings from '@/app/actions/getListings';
+import qs from 'query-string';
 
 export async function POST(request: Request) {
   const currentUser = await getCurrentUser();
@@ -45,4 +47,17 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json(listing);
+}
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    let query: any = {};
+    if (searchParams) {
+      query = qs.parse(searchParams.toString());
+    }
+    const listings = await getListings(query);
+    return NextResponse.json(listings);
+  } catch (error) {
+    return NextResponse.error();
+  }
 }
